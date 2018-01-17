@@ -3,14 +3,17 @@
 # codestream-kubernetes-plugin
 
 ## Overview
+This is vRealize Code Stream plugin that automates CI/CD operations with Kubernetes. This plugin support operations on Kubernetes objects like Namespace, Deployment, Pod, Replica Set, Replication Controller, Services and Secrets. It also helps perform upgrade of container image. The aim of this open source plugin is to release new capabilities faster and also allow Developers, Customers, the VMware field and partners to modify it for their own purposes and to be able to contribute back for larger benefit of the community using vRealize Code Stream.
 
-## Try it out
+## Compatibility with vRealize Code Stream Versions
+vRealize Code Stream 2.2
+
+## Compatibility with Kubernetes Versions
+Kubernetes 1.5.2
 
 ### Prerequisites
-
-* Prereq 1
-* Prereq 2
-* Prereq 3
+1. A Kubernetes Cluster already deployed
+2. Kubernetes cluster's master IP address or DNS name with API auth
 
 ### Build & Run
 
