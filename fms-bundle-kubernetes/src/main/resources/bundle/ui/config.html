@@ -1,0 +1,358 @@
+<!--
+  Copyright © 2017-2018 VMware, Inc. All Rights Reserved.
+  -->
+<!DOCTYPE html>
+<html>
+
+<head>
+     <link type="text/css" href="((VRCS_SHARED_WEB_CONTENT))/css/bootstrap.css" rel="stylesheet">
+    <link type="text/css" href="((VRCS_SHARED_WEB_CONTENT))/css/autocomplete.css" rel="stylesheet">
+    <link type="text/css" href="css/bootstrapTokenField.css" rel="stylesheet">
+    <link type="text/css" href="((VRCS_SHARED_WEB_CONTENT))/css/plugin.css" rel="stylesheet">
+    <link type="text/css" href="css/kubernetes.css" rel="stylesheet">
+
+    <script type="text/javascript" src="((VRCS_SHARED_WEB_CONTENT))/js/template-util.js"></script>
+    <script type="text/javascript" src="((VRCS_SHARED_WEB_CONTENT))/js/lib/jquery-1.11.1.js"></script>
+    <script type="text/javascript" src="((VRCS_SHARED_WEB_CONTENT))/js/lib/bootstrap.min.js"></script>
+    <script type="text/javascript" src="((VRCS_SHARED_WEB_CONTENT))/js/validation-util.js"></script>
+    <script type="text/javascript" src="((VRCS_SHARED_WEB_CONTENT))/js/help-util.js"></script>
+    <script type="text/javascript" src="((VRCS_SHARED_WEB_CONTENT))/js/lib/ace-custom/ace.js"></script>
+    <script type="text/javascript" src="js/bootstrapTokenField.js"></script>
+    <script type="text/javascript" src="js/config.js"></script>
+</head>
+
+<body>
+
+    <form id="kubernetesConfigContainer" class="form-horizontal" role="form">
+        <div class="panel panel-default plain-panel">
+
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                Kubernetes Properties
+                </h4>
+            </div>
+
+            <div id ="endpointSelectDiv" class="form-group">
+                <label class="control-label col-md-3 col-xs-3 mandatory-before">Endpoint:</label>
+                <div class="col-md-6 col-xs-6">
+                    <select id="endpointSelect" class="form-control input-sm"></select>
+                </div>
+            </div>
+
+            <div id="endpointSelectTextDiv" class="form-group">
+                <label class="control-label col-md-3 col-xs-3 col-displayName mandatory-before text-right">Endpoint:</label>
+                <div class="col-md-9 col-xs-9">
+                    <input id="endpointSelectText" type="text" name="endpoint" maxlenght = '63' placeholder="Enter endpoint">
+                </div>
+            </div>
+
+            <div id="jobConfigMenuDiv" class="form-group">
+                <label class="control-label col-md-3 col-xs-3 col-displayName mandatory-before text-right">
+                Job:
+                </label>
+                <div class="col-md-9 col-xs-9">
+                    <div class="row">
+                        <div class="col-md-8 col-xs-8">
+                            <select class="form-control input-sm" id="jobName">
+                                        <option disabled value="selectJob">-- Select Job--</option>
+                                        <optgroup label="Deployment">
+                                            <option selected="selected" value="createDp">Creation of deployment</option>
+                                            <option value="deleteDp">Deletion of deployment</option>
+                                            <option value="updateImg">Update of images in deployment</option>
+                                           <!-- <option value ="scaleDp">Scaling deployment</option>-->
+                                        </optgroup>
+                                        <optgroup label="Replica Sets">
+                                            <option value="createRs">Creation of replica Sets</option>
+                                            <option value="deleteRs">Deletion of replica Sets</option>
+                                        </optgroup>
+                                        <optgroup label="Replication">
+                                            <option value="createRc">Creation of replication Controller</option>
+                                            <option value="deleteRc">Deletion of replication Controller</option>
+                                            <!--<option value="scaleRc">Scaling replication controller</option>-->
+                                        </optgroup>
+                                        <optgroup label="Pod">
+                                            <option value="createPod">Creation of Pod</option>
+                                            <option value="deletePod">Deletion of Pod</option>
+                                        </optgroup>
+                                        <optgroup label="Namespace">
+                                            <option value="createNs">Creation of Namespace</option>
+                                            <option value="deleteNs">Deletion of Namespace</option>
+                                        </optgroup>
+                                        <optgroup label =Service>
+                                            <option value="createSvc">Creation of Service</option>
+                                            <option value="deleteSvc">Deletion of Service</option>
+                                        </optgroup>
+                                        <optgroup label =PersistentVolume>
+                                            <option value="createPv">Creation of PersistentVolume</option>
+                                            <option value="deletePv">Deletion of PersistentVolume</option>
+                                        </optgroup>
+                                        <optgroup label =PersistentVolumeClaim>
+                                            <option value="createPvc">Creation of PersistentVolumeClaim</option>
+                                            <option value="deletePvc">Deletion of PersistentVolumeClaim</option>
+                                        </optgroup>
+                                        <optgroup label =Secrets>
+                                            <option value="createSecrets">Creation of Secrets</option>
+                                            <option value="deleteSecrets">Deletion of Secrets</option>
+                                        </optgroup>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id ="nameSpaceDiv" class="form-group">
+                <label class="control-label col-md-3 col-xs-3 col-displayName">Namespace</label>
+                <div class="col-md-9 col-xs-9">
+                    <input id=nameSpace type="text" name="nameSpace" maxlenght = '63' placeholder="Enter Namespace to be Created ">
+                </div>
+            </div>
+
+            <div id ="listNamespace" class="form-group">
+                <label class="control-label col-md-3 col-xs-3 col-displayName mandatory-before text-right">Namespace:</label>
+                <div class="col-md-6 col-xs-6">
+                    <select id="nsSelect" class="form-control input-sm"></select>
+                </div>
+            </div>
+
+            <div id="nsSelectTextDiv" class="form-group">
+                <label class="control-label col-md-3 col-xs-3 col-displayName mandatory-before text-right">Namespace:</label>
+                <div class="col-md-9 col-xs-9">
+                    <input id="nsSelectText" type="text" name="nameSpace" maxlenght = '63' placeholder="Enter Namespace">
+                </div>
+            </div>
+
+            <div id ="listPods" class="form-group">
+                <label class="control-label col-md-3 col-xs-3 col-displayName mandatory-before text-right">Pods:</label>
+                <div class="col-md-6 col-xs-6">
+                    <select id="podSelect" class="form-control input-sm"></select>
+                </div>
+            </div>
+
+            <div id="podSelectTextDiv" class="form-group">
+                <label class="control-label col-md-3 col-xs-3 col-displayName mandatory-before text-right">Pods:</label>
+                <div class="col-md-9 col-xs-9">
+                    <input id="podSelectText" type="text" name="pod"  placeholder="Enter Pod Name">
+                </div>
+            </div>
+
+            <div id ="listRc" class="form-group">
+                <label class="control-label col-md-3 col-xs-3 col-displayName mandatory-before text-right">Replication Controller:</label>
+                <div class="col-md-6 col-xs-6">
+                    <select id="rcSelect" class="form-control input-sm"></select>
+                </div>
+            </div>
+
+
+            <div id="rcSelectTextDiv" class="form-group">
+                <label class="control-label col-md-3 col-xs-3 col-displayName mandatory-before text-right">Replication Controller:</label>
+                <div class="col-md-9 col-xs-9">
+                    <input id="rcSelectText" type="text" name="rc"  placeholder="Enter replication controller">
+                </div>
+            </div>
+
+            <div id="numList" class="form-group">
+                <label class="control-label col-md-3 col-xs-3 col-displayName mandatory-before text-right">Replicas:</label>
+                <div class="col-md-6 col-xs-6">
+                    <input id ="replica" type="number" min="1" max="100" value="1">
+                </div>
+            </div>
+
+            <div id ="listSvc" class="form-group">
+                <label class="control-label col-md-3 col-xs-3 col-displayName mandatory-before text-right">Service:</label>
+                <div class="col-md-6 col-xs-6">
+                    <select id="svcSelect" class="form-control input-sm"></select>
+                </div>
+            </div>
+
+            <div id="svcSelectTextDiv" class="form-group">
+                <label class="control-label col-md-3 col-xs-3 col-displayName mandatory-before text-right">Service:</label>
+                <div class="col-md-9 col-xs-9">
+                    <input id="svcSelectText" type="text" name="svc" placeholder="Enter Service Name">
+                </div>
+            </div>
+
+            <div id ="listPvc" class="form-group">
+                <label class="control-label col-md-3 col-xs-3 col-displayName mandatory-before text-right">PersistentVolumeClaim:</label>
+                <div class="col-md-6 col-xs-6">
+                    <select id="pvcSelect" class="form-control input-sm"></select>
+                </div>
+            </div>
+
+            <div id="pvcSelectTextDiv" class="form-group">
+                <label class="control-label col-md-3 col-xs-3 col-displayName mandatory-before text-right">Persistent Volume Claim:</label>
+                <div class="col-md-9 col-xs-9">
+                    <input id="pvcSelectText" type="text" name="pvc" placeholder="Enter Persistent Volume Claim">
+                </div>
+            </div>
+
+            <div id ="listPv" class="form-group">
+                <label class="control-label col-md-3 col-xs-3 col-displayName mandatory-before text-right">PersistentVolume:</label>
+                <div class="col-md-6 col-xs-6">
+                    <select id="pvSelect" class="form-control input-sm"></select>
+                </div>
+            </div>
+
+            <div id="pvSelectTextDiv" class="form-group">
+                <label class="control-label col-md-3 col-xs-3 col-displayName mandatory-before text-right">Persistent Vol:</label>
+                <div class="col-md-9 col-xs-9">
+                    <input id="pvSelectText" type="text" name="pv" placeholder="Enter Persistent Vol">
+                </div>
+            </div>
+
+            <div id ="listsecrets" class="form-group">
+                <label class="control-label col-md-3 col-xs-3 col-displayName mandatory-before text-right">Secrets:</label>
+                <div class="col-md-6 col-xs-6">
+                    <select id="secretsSelect" class="form-control input-sm"></select>
+                </div>
+            </div>
+
+            <div id="secretsSelectTextDiv" class="form-group">
+                <label class="control-label col-md-3 col-xs-3 col-displayName mandatory-before text-right">Secrets:</label>
+                <div class="col-md-9 col-xs-9">
+                    <input id="secretsSelectText" type="text" name="secrets" placeholder="Enter Secret name">
+                </div>
+            </div>
+
+
+            <div id ="listRs" class="form-group">
+                <label class="control-label col-md-3 col-xs-3 col-displayName mandatory-before text-right">Replica Sets:</label>
+                <div class="col-md-6 col-xs-6">
+                    <select id="rsSelect" class="form-control input-sm"></select>
+                </div>
+            </div>
+
+            <div id="rsSelectTextDiv" class="form-group">
+                <label class="control-label col-md-3 col-xs-3 col-displayName mandatory-before text-right">Replica Sets:</label>
+                <div class="col-md-9 col-xs-9">
+                    <input id="rsSelectText" type="text" name="rs" placeholder="Enter replica Set">
+                </div>
+            </div>
+
+            <div id="scriptOptionDiv" class="row">
+                <label class="control-label col-md-3 col-xs-3 col-displayName mandatory-before text-right">
+                    Definition:
+                </label>
+                <div class="col-md-9 col-xs-9">
+                    <div class="row">
+                        <div class="col-md-5 col-xs-5">
+                            <label class="radio-inline">
+                                <input id="remoteScript" name="scriptOption" type="radio"
+                                    value="remoteScript" checked>
+                                        Remote File
+                            </label>
+                        </div>
+                        <div class="col-md-7 col-xs-7">
+                            <label class="radio-inline">
+                                <input id="userDefinedScript" name="scriptOption" type="radio"
+                                 value="userDefinedScript">
+                                    User Defined File
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="remoteScriptDiv">
+                    <div class="form-group form-group-single-child">
+
+                            <label class="control-label col-md-3 col-xs-3 col-displayName mandatory-before text-right">
+                                Definition File:</label>
+
+                            <div class="col-md-7 col-xs-7">
+                                <input  class="col-value"
+                                        id="definitionName"
+                                        placeholder="Select the Defination file"
+                                        type="file"  autocomplete="off" style="display: none">
+                                <input type="button" value="Browse..." onclick="document.getElementById('definitionName').click();" />
+                            </div>
+
+                    </div>
+            </div>
+
+            <div id="fileDisplay" >
+                <div class="form-group">
+                    <div class="col-name"></div>
+                    <label class="control-label col-md-3 col-xs-3 col-displayName"></label>
+
+                    <div class="col-md-7 col-xs-7">
+                        <pre id="fileDisplayArea">File Contents</pre>
+                    </div>
+                </div>
+            </div>
+
+            <div id="userDefinedScriptDiv">
+                <div class="form-group">
+                    <label class="control-label col-md-3 col-xs-3 col-displayName mandatory-before text-right">
+                        Definition Content:</label>
+                            <div class="col-md-7 col-xs-7">
+                                <div id="editor" contenteditable="true"></div>
+                            </div>
+                </div>
+            </div>
+
+            <div id="depSelectDiv" class="form-group">
+                <label class="control-label col-md-3 col-xs-3 col-displayName mandatory-before text-right">Deployment:</label>
+                <div class="col-md-6 col-xs-6">
+                    <select id="depSelect" class="form-control input-sm"></select>
+                </div>
+            </div>
+
+            <div id="depSelectTextDiv" class="form-group">
+                <label class="control-label col-md-3 col-xs-3 col-displayName mandatory-before text-right">Deployment:</label>
+                <div class="col-md-9 col-xs-9">
+                    <input id="depSelectText" type="text" name="dep" placeholder="Enter department Name">
+                </div>
+            </div>
+
+            <div id="imageDiv">
+                <div class="form-group">
+                    <label class="control-label col-md-3 col-xs-3 col-displayName">Images:
+                    </label>
+                </div>
+                <div class="panel-body">
+                    <section class="form-block">
+                        <table class="table table-compact">
+                            <thead>
+                            <tr>
+                                <th class="left">Select</th>
+                                <th class="left">Image Name</th>
+                                <th class="left">Requested Version</th>
+                            </tr>
+                            </thead>
+                            <tbody id="imageSelectDiv">
+                            </tbody>
+                        </table>
+                    </section>
+                </div>
+            </div>
+
+        </div>
+        <div class="panel panel-default plain-panel">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    Output Properties
+                </h4>
+            </div>
+
+            <div id="scriptOutputPanel">
+                <div class="panel-body">
+                    <div class="table">
+                        <div class="tb-header-row">
+                            <div class="tb-cell">
+                                Name
+                            </div>
+                        </div>
+
+                        <div class="tb-row prop-row">
+                            <div class="tb-cell col-displayName">Response</div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+</body>
+
+</html>

@@ -1,0 +1,117 @@
+/*
+ * Copyright (c) 2017-2018 VMware, Inc. All Rights Reserved.
+ */
+#editor {
+    position: relative;
+    height: 200px;
+    border: 1px solid #b5b8c8;
+    margin-bottom: 1.5em;
+    border-radius: 3px;
+}
+
+#editor.editor-readonly {
+    background: #eee;
+}
+
+#script-content {
+    float: left;
+}
+/*-------------------------------------------*/
+
+#scriptOptionDiv{
+    line-height: 10px;
+}
+
+#userDefinedHostConfigDiv {
+    margin-bottom: 20px;
+}
+
+#generalConfig input {
+    width: 200px;
+    margin-left: 10px
+}
+
+.form-horizontal .tokenfield.form-control {
+    height: 20px !important;
+    overflow-y: hidden;
+    overflow-x: hidden;
+}
+
+.table .checkbox-cell {
+    text-align: center;
+}
+
+.add-row:before {
+    content: "\2B  ";
+    font-size: 14px;
+    color: green;
+    font-weight: bold;
+}
+
+.del-row:before {
+    content: "x  ";
+    font-size: 14px;
+    color: red;
+    font-weight: bold;
+}
+
+.result-output {
+    clear: both;
+}
+
+.execution-result a:hover,
+.execution-result a:focus,
+.execution-result a:active {
+    text-decoration: none !important;
+}
+
+.host-textarea {
+    width: 100%;
+    max-width: 100%;
+    resize: vertical;
+}
+
+.host-output > div {
+    margin-top: 7px;
+    padding-top: 7px;
+    border-top: 1px solid #eee;
+}
+
+.host-output > div:first-child {
+    margin-top: 0;
+    padding-top: 0;
+    border-top: none;
+}
+
+.view-log-expand {
+    margin-top: 10px;
+}
+
+.view-log-expand textarea {
+    resize: vertical;
+}
+
+.host-info .collapsed .toggle-arrow:before{
+    content: '\25B8 ' !important;
+}
+
+.host-info .toggle-arrow:before {
+    content: '\25BE ' !important;
+    font-style: normal;
+    vertical-align: top;
+    display: inline-block;
+    width: 10px;
+    line-height: 10px;
+}
+
+#fileDisplayArea {
+  overflow-x: auto;
+}
+
+.form-group-single-child {
+    margin-bottom: 15px !important;
+}
+
+.info-text {
+    margin-top: 2px; 
+}

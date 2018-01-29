@@ -1,0 +1,207 @@
+---
+bundleId: "vrcs.kubernetes"
+version: "2.0.0"
+description: "This is VMware kubernetes Bundle"
+documentation: "none"
+author: "VMware Inc."
+datatypes:
+  - "datatypes/KubernetesMaster.yaml"
+tiles:
+  -
+    tileId: "vrcs.kubernetes:Start"
+    displayName: "Kubernetes"
+    inputProperties:
+        kubernetesMaster:
+            type: "vrcs.kubernetes:KubernetesMaster"
+        isUserDefinedScript:
+            type: "Boolean"
+        nameSpaceVal:
+            type: "String"
+        nameSpaceOpt:
+            type: "String"
+        definitionName:
+            type: "String"
+        definitionContent:
+            type: "String"
+        jobName:
+            type: "String"
+        imagesName:
+            type: "String[]"
+        depName:
+            type: "String"
+        imagesReqVer:
+            type: "String[]"
+        deleteParam:
+            type: "String"
+        replicas:
+            type: "String"
+    outputProperties:
+        response:
+            type: "JSON"
+    executorType: "JAVA"
+    executor: "com.vmware.fms.tile.kubernetes.Start"
+    categories: ["ALL"]
+    tags:
+        - VRCS_TASK
+    views:
+        -
+            path: "/config.html"
+            viewName: "config"
+        -
+            path: "/result.html"
+            viewName: "result"
+  -
+    tileId: "vrcs.kubernetes:get_deployment"
+    inputProperties:
+        kubernetesMaster:
+            type: "vrcs.kubernetes:KubernetesMaster"
+        nameSpaceVal:
+            type: "String"
+    outputProperties:
+        listDeployment:
+            type: "String[]"
+    executorType: "JAVA"
+    executor: "com.vmware.fms.tile.kubernetes.ListDeployment"
+    tags:
+        - VRCS_VIEW_CALLABLE
+  -
+    tileId: "vrcs.kubernetes:get_secret"
+    inputProperties:
+        kubernetesMaster:
+            type: "vrcs.kubernetes:KubernetesMaster"
+        nameSpaceVal:
+            type: "String"
+    outputProperties:
+        listsecrets:
+            type: "String[]"
+    executorType: "JAVA"
+    executor: "com.vmware.fms.tile.kubernetes.ListSecrets"
+    tags:
+        - VRCS_VIEW_CALLABLE
+
+  -
+    tileId: "vrcs.kubernetes:get_images"
+    inputProperties:
+        kubernetesMaster:
+            type: "vrcs.kubernetes:KubernetesMaster"
+        nameSpaceVal:
+            type: "String"
+        depName:
+            type: "String"
+    outputProperties:
+        listImages:
+            type: "String[]"
+        imageNum:
+            type: "Integer"
+    executorType: "JAVA"
+    executor: "com.vmware.fms.tile.kubernetes.ListImages"
+    tags:
+        - VRCS_VIEW_CALLABLE
+  -
+    tileId: "vrcs.kubernetes:list_namespace"
+    inputProperties:
+        kubernetesMaster:
+            type: "vrcs.kubernetes:KubernetesMaster"
+    outputProperties:
+        listNs:
+          type: "String[]"
+    executorType: "JAVA"
+    executor: "com.vmware.fms.tile.kubernetes.ListNs"
+    tags:
+        - VRCS_VIEW_CALLABLE
+  -
+    tileId: "vrcs.kubernetes:list_pods"
+    inputProperties:
+        kubernetesMaster:
+            type: "vrcs.kubernetes:KubernetesMaster"
+        nameSpaceVal:
+            type: "String"
+    outputProperties:
+        listPods:
+          type: "String[]"
+    executorType: "JAVA"
+    executor: "com.vmware.fms.tile.kubernetes.ListPods"
+    tags:
+        - VRCS_VIEW_CALLABLE
+  -
+    tileId: "vrcs.kubernetes:list_rc"
+    inputProperties:
+        kubernetesMaster:
+            type: "vrcs.kubernetes:KubernetesMaster"
+        nameSpaceVal:
+            type: "String"
+    outputProperties:
+        listRc:
+          type: "String[]"
+    executorType: "JAVA"
+    executor: "com.vmware.fms.tile.kubernetes.ListRc"
+    tags:
+        - VRCS_VIEW_CALLABLE
+  -
+    tileId: "vrcs.kubernetes:list_rs"
+    inputProperties:
+        kubernetesMaster:
+            type: "vrcs.kubernetes:KubernetesMaster"
+        nameSpaceVal:
+            type: "String"
+    outputProperties:
+        listRs:
+          type: "String[]"
+    executorType: "JAVA"
+    executor: "com.vmware.fms.tile.kubernetes.ListRs"
+    tags:
+        - VRCS_VIEW_CALLABLE
+  -
+    tileId: "vrcs.kubernetes:list_svc"
+    inputProperties:
+        kubernetesMaster:
+            type: "vrcs.kubernetes:KubernetesMaster"
+        nameSpaceVal:
+            type: "String"
+    outputProperties:
+        listSvc:
+          type: "String[]"
+    executorType: "JAVA"
+    executor: "com.vmware.fms.tile.kubernetes.ListSvc"
+    tags:
+        - VRCS_VIEW_CALLABLE
+  -
+    tileId: "vrcs.kubernetes:list_pvc"
+    inputProperties:
+        kubernetesMaster:
+            type: "vrcs.kubernetes:KubernetesMaster"
+        nameSpaceVal:
+            type: "String"
+    outputProperties:
+        listPvc:
+          type: "String[]"
+    executorType: "JAVA"
+    executor: "com.vmware.fms.tile.kubernetes.ListPvc"
+    tags:
+        - VRCS_VIEW_CALLABLE
+  -
+    tileId: "vrcs.kubernetes:list_pv"
+    inputProperties:
+        kubernetesMaster:
+            type: "vrcs.kubernetes:KubernetesMaster"
+    outputProperties:
+        listPv:
+          type: "String[]"
+    executorType: "JAVA"
+    executor: "com.vmware.fms.tile.kubernetes.ListPv"
+    tags:
+        - VRCS_VIEW_CALLABLE
+  -
+    tileId: "vrcs.kubernetes:endpoint"
+    displayName: "Kubernetes"
+    inputProperties:
+        kubernetesMaster:
+            type: "vrcs.kubernetes:KubernetesMaster"
+    executor: "service.ValidateEndpointTile"
+    executorType: "JAVA"
+    tags:
+      - VRCS_ENDPOINT
+    views:
+      -
+        path: "/endpoint.html"
+        viewName: "endpoint"

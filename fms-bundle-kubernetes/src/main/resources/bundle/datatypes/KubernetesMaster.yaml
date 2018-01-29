@@ -1,0 +1,5 @@
+---
+  name: "vrcs.kubernetes:KubernetesMaster"
+  properties:
+    url:
+      type: "String"
