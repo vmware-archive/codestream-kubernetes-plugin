@@ -29,7 +29,7 @@ Building kubernetes plugin
 1. Clone this repository to the same development machine where above steps where performed.
 2. Go under the directory fms-bundle-kubernetes and build using mvn clean install
 3. Go to the target/ directory under root and copy the fms-bundle-kubernetes-2.0.2.zip to       VRCS_APPLIANCE_HOST:/var/lib/codestram/plugins/
-4. Unzip the zip file and restart the vcac-server service.
+4. Unzip the zip file and restart the vcac-server service.(will take 10-15 minutes for all the service to start , you can check in VRBC_INSTANCE_URL:5480)
 
 ## Documentation
 
