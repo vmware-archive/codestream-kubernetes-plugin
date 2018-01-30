@@ -1,6 +1,8 @@
+/**
+ * Copyright © 2017-2018 VMware, Inc. All Rights Reserved.
+ */
 package com.vmware.fms.tile.kubernetes;
 
-import com.vmware.fms.bundle.vrcs.common.http.TektonHttpClientImpl;
 import service.HttpResponse;
 import service.KubernetesMasterConfig;
 

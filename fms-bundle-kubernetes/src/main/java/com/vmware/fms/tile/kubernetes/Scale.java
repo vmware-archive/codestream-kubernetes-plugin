@@ -1,3 +1,6 @@
+/**
+ * Copyright © 2017-2018 VMware, Inc. All Rights Reserved.
+ */
 package com.vmware.fms.tile.kubernetes;
 
 import com.google.gson.Gson;
