@@ -2,7 +2,6 @@ package com.vmware.fms.tile.kubernetes;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.vmware.fms.bundle.vrcs.common.http.TektonHttpClientImpl;
 import com.vmware.fms.tile.kubernetes.util.ResponseK8;
 import service.HttpResponse;
 import service.KubernetesMasterConfig;
@@ -45,8 +44,6 @@ public class Scale  {
         String partialPayload= "";
 
         System.out.println(url);
-
-        //TektonHttpClientImpl tektonHttpClient = new TektonHttpClientImpl(user_name, password);
         HttpResponse client = new HttpResponse(user_name,password);
         try {
             reply = client.get(url);

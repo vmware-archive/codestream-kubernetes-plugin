@@ -34,7 +34,6 @@ public class ListDeployment implements TileExecutable {
         String createUrl = "apis/extensions/v1beta1/namespaces/" + namespace + "/deployments";
         String reply = null;
         String url = hostUrl + createUrl;
-        //TektonHttpClientImpl tektonHttpClient = new TektonHttpClientImpl(user_name, password);
         HttpResponse client = new HttpResponse(user_name,password);
         try {
             reply = client.get(url);

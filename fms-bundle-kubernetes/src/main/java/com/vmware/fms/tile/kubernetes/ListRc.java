@@ -5,7 +5,6 @@ package com.vmware.fms.tile.kubernetes;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.vmware.fms.bundle.vrcs.common.http.TektonHttpClientImpl;
 import com.vmware.fms.tile.common.TileExecutable;
 import com.vmware.fms.tile.common.TileExecutableRequest;
 import com.vmware.fms.tile.common.TileExecutableResponse;

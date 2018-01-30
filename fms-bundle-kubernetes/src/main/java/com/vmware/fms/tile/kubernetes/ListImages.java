@@ -4,7 +4,6 @@
 package com.vmware.fms.tile.kubernetes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.vmware.fms.bundle.vrcs.common.http.TektonHttpClientImpl;
 import com.vmware.fms.tile.common.TileExecutable;
 import com.vmware.fms.tile.common.TileExecutableRequest;
 import com.vmware.fms.tile.common.TileExecutableResponse;
@@ -35,7 +34,6 @@ public class ListImages implements TileExecutable {
                 "apis/extensions/v1beta1/namespaces/" + namespace + "/deployments/" + name;
         String reply=null;
         String url = hostUrl + createUrl;
-        //TektonHttpClientImpl tektonHttpClient = new TektonHttpClientImpl(user_name, password);
         HttpResponse client = new HttpResponse(user_name,password);
         try {
             reply = client.get(url);

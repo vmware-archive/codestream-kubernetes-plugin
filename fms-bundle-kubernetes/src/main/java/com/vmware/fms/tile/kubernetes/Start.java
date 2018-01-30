@@ -1,6 +1,8 @@
+/**
+ * Copyright © 2017 VMware, Inc. All Rights Reserved.
+ */
 package com.vmware.fms.tile.kubernetes;
 
-import com.vmware.fms.bundle.vrcs.common.http.TektonHttpClientImpl;
 import com.vmware.fms.tile.common.TileExecutable;
 import com.vmware.fms.tile.common.TileExecutableRequest;
 import com.vmware.fms.tile.common.TileExecutableResponse;
@@ -87,8 +89,12 @@ public class Start implements TileExecutable {
                 contents = ConvertToJson.convertToJson(contents);
             }
             logger.info(contents);
-            TektonHttpClientImpl client = new TektonHttpClientImpl("", "");
-            reply = client.post(url, contents, "application/json");
+            HttpResponse client = new HttpResponse(user_name,password);
+            try {
+                reply = client.post(url, contents, "application/json");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         else if (jobType.equals("createRc")) {
             jobUrl = "replicationcontrollers";
@@ -100,8 +106,12 @@ public class Start implements TileExecutable {
                 contents = ConvertToJson.convertToJson(contents);
             }
             logger.info(contents);
-            TektonHttpClientImpl client = new TektonHttpClientImpl("", "");
-            reply = client.post(url, contents, "application/json");
+            HttpResponse client = new HttpResponse(user_name,password);
+            try {
+                reply = client.post(url, contents, "application/json");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         else if (jobType.equals("createSecrets")) {
             jobUrl = "secrets";
@@ -113,8 +123,12 @@ public class Start implements TileExecutable {
                 contents = ConvertToJson.convertToJson(contents);
             }
             logger.info(contents);
-            TektonHttpClientImpl client = new TektonHttpClientImpl("", "");
-            reply = client.post(url, contents, "application/json");
+            HttpResponse client = new HttpResponse(user_name,password);
+            try {
+                reply = client.post(url, contents, "application/json");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         else if (jobType.equals("createRs")) {
             jobUrl = "replicationcontrollers";
@@ -126,17 +140,25 @@ public class Start implements TileExecutable {
                 contents = ConvertToJson.convertToJson(contents);
             }
             logger.info(contents);
-            TektonHttpClientImpl client = new TektonHttpClientImpl("", "");
-            reply = client.post(url, contents, "application/json");
+            HttpResponse client = new HttpResponse(user_name,password);
+            try {
+                reply = client.post(url, contents, "application/json");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         else if (jobType.equals("createNs")){
             jobUrl = "namespaces";
             String createUrl = "api/v1/";
             String url = hostUrl + createUrl + jobUrl;
-            TektonHttpClientImpl client = new TektonHttpClientImpl("", "");
+            HttpResponse client = new HttpResponse(user_name,password);
             String name  = request.getInputProperties().getAsString("nameSpaceVal");
             String contents = "{\"kind\":\"Namespace\",\"apiVersion\":\"v1\",\"metadata\":{\"name\":\""+name+"\",\"creationTimestamp\":null},\"spec\":{},\"status\":{}}\n";
-            reply = client.post(url, contents, "application/json");
+            try {
+                reply = client.post(url, contents, "application/json");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }else if(jobType.equals("createSvc")){
             jobUrl = "services";
             String nameSpace = request.getInputProperties().getAsString("nameSpaceOpt");
@@ -147,8 +169,12 @@ public class Start implements TileExecutable {
                 contents = ConvertToJson.convertToJson(contents);
             }
             logger.info(contents);
-            TektonHttpClientImpl client = new TektonHttpClientImpl("", "");
-            reply = client.post(url, contents, "application/json");
+            HttpResponse client = new HttpResponse(user_name,password);
+            try {
+                reply = client.post(url, contents, "application/json");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         else if(jobType.equals("deletePod")){
             jobUrl = "pods/";
