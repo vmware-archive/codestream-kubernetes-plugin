@@ -12,24 +12,24 @@ vRealize Code Stream 2.2 ,vRealize Code Stream 2.3
 Kubernetes 1.5.2 (*currently basic auth only)
 
 ### Prerequisites
-1. A Kubernetes Cluster already deployed
-2. Kubernetes cluster's master IP address or DNS name with API auth
+1. A Kubernetes Cluster is already deployed.
+2. Kubernetes cluster's master IP address or DNS name with API auth.
 3. A development machine running on Microsoft Windows, Apple Mac OS X or Linux.
-4. A development appliance of vRCS installed in your environment (Recommended).
+4. A development appliance of vRealize Code Stream installed in your environment (Recommended).
 5. JDK 8
 6. Maven 3.1.1+
 
 ### Build & Run
 Setting Environment to build the plugin
-1. Clone vRealize Code Stream Plug-In SDK(https://github.com/vmwaresamples/vrcs-sdk-samples.git) in your development machine
-2. Go to the directory /lib from the root of the repository vrcs-sdk-samples and build using mvn clean install 
-3. Go back to the root and build using mvn clean install
+1. Clone vRealize Code Stream Plug-In SDK (https://github.com/vmwaresamples/vrcs-sdk-samples.git) in your development machine.
+2. Go to the directory /lib from the root of the repository vrcs-sdk-samples and build using mvn clean install.
+3. Go back to the root and build using mvn clean install.
 
-Building the Kubernetes plugin
+Building the plugin
 1. Clone this repository to the same development machine where above steps where performed.
-2. Go under the directory fms-bundle-kubernetes and build using mvn clean install
+2. Go under the directory fms-bundle-kubernetes and build using mvn clean install.
 3. Go to the target/ directory under root and copy the fms-bundle-kubernetes-2.0.2.zip to       VRCS_APPLIANCE_HOST:/var/lib/codestrem/plugins/
-4. Unzip the zip file and restart the vcac-server service. (Itwill take 10-15 minutes for all the service to start. You can check in VRBC_INSTANCE_URL:5480)
+4. Unzip the zip file and restart the vcac-server service. (It will take 10-15 minutes for all the service to start. You can check VRBC_INSTANCE_URL:5480).
 
 ## Documentation
 
