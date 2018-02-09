@@ -2,11 +2,7 @@
 
 # Contributing to codestream-kubernetes-plugin
 
-The codestream-kubernetes-plugin project team welcomes contributions from the community. If you wish to contribute code and you have not
-signed our contributor license agreement (CLA), our bot will update the issue when you open a Pull Request. For any
-questions about the CLA process, please refer to our [FAQ](https://cla.vmware.com/faq).
-
-## Community
+The codestream-kubernetes-plugin project team welcomes contributions from the community. Before you start working with codestream-kubernetes-plugin, please read our [Developer Certificate of Origin](https://cla.vmware.com/dco). All contributions to this repository must be signed as described on that page. Your signature certifies that you wrote the patch or have the right to pass it on as an open-source patch.
 
 ## Getting Started
 ### Prerequisites
@@ -85,8 +81,6 @@ git push --force-with-lease origin my-new-feature
 Be sure to add a comment to the PR indicating your new changes are ready to review, as GitHub does not generate a
 notification when you git push.
 
-### Code Style
-
 ### Formatting Commit Messages
 
 We follow the conventions on [How to Write a Git Commit Message](http://chris.beams.io/posts/git-commit/).
@@ -98,5 +92,3 @@ and commits.
 ## Reporting Bugs and Creating Issues
 
 When opening a new issue, try to roughly follow the commit message format conventions above.
-
-## Repository Structure
