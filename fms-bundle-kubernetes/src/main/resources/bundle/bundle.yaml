@@ -37,7 +37,7 @@ tiles:
             type: "String"
     outputProperties:
         response:
-            type: "JSON"
+            type: "String"
     executorType: "JAVA"
     executor: "com.vmware.fms.tile.kubernetes.Start"
     categories: ["ALL"]

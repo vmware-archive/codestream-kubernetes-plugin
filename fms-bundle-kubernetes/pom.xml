@@ -22,19 +22,20 @@
             <version>1.5.0</version>
         </dependency>
         <dependency>
+            <groupId>io.kubernetes</groupId>
+            <artifactId>client-java</artifactId>
+            <version>0.2</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
             <version>20160810</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <version>4.3.6</version>
-        </dependency>git st
-        <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
-            <version>2.3.1</version>
+            <version>2.6.2</version>
         </dependency>
         <dependency>
             <groupId>org.apache.maven.plugins</groupId>
@@ -51,7 +52,6 @@
             <artifactId>jackson-databind</artifactId>
             <version>2.9.1</version>
         </dependency>
-
     </dependencies>
     <build>
         <resources>

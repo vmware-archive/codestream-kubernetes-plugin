@@ -12,18 +12,23 @@ Copyright (c) 2017-2018 VMware, Inc. All Rights Reserved.
  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 package com.vmware.fms.tile.kubernetes;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.vmware.fms.tile.common.TileExecutable;
 import com.vmware.fms.tile.common.TileExecutableRequest;
 import com.vmware.fms.tile.common.TileExecutableResponse;
 import com.vmware.fms.tile.common.TileProperties;
-import com.vmware.fms.tile.kubernetes.util.ResponseK8;
-import service.HttpResponse;
+import io.kubernetes.client.ApiClient;
+import io.kubernetes.client.Configuration;
+import io.kubernetes.client.apis.ExtensionsV1beta1Api;
+import io.kubernetes.client.models.ExtensionsV1beta1Deployment;
+import io.kubernetes.client.models.V1Container;
+import io.kubernetes.client.util.Config;
+import io.kubernetes.client.util.KubeConfig;
 import service.KubernetesMasterConfig;
 
-import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
 public class ListImages implements TileExecutable {
@@ -32,36 +37,33 @@ public class ListImages implements TileExecutable {
     public void handleExecute(TileExecutableRequest request, TileExecutableResponse response) {
         //All the images which are present in the pods created by the given deployment are list
         logger.info("\nEntered ListImages\n");
-        TileProperties inputProps =
-                request.getInputProperties().getAsProperties("kubernetesMaster");
+        TileProperties inputProps = request.getInputProperties().getAsProperties("kubernetesMaster");
         KubernetesMasterConfig config = new KubernetesMasterConfig(inputProps);
-        String hostUrl = config.getMaster();
-        String user_name = config.getUser_name();
-        String password = config.getPassword();
+
         String name = request.getInputProperties().getAsString("depName");
         String namespace = request.getInputProperties().getAsString("nameSpaceVal");
-        String createUrl =
-                "apis/extensions/v1beta1/namespaces/" + namespace + "/deployments/" + name;
         String reply=null;
-        String url = hostUrl + createUrl;
-        HttpResponse client = new HttpResponse(user_name,password);
+        String kubeconf = config.getKubeconfig();
+        Reader targetKubernetes  = new StringReader(kubeconf);
+        KubeConfig kubeconfig = KubeConfig.loadKubeConfig(targetKubernetes);
+        ApiClient client = Config.fromConfig(kubeconfig);
+        Configuration.setDefaultApiClient(client);
+        ExtensionsV1beta1Api api = new ExtensionsV1beta1Api();
+        ExtensionsV1beta1Deployment Deployment =null;
         try {
-            reply = client.get(url);
-        } catch (IOException e) {
+            Deployment = api.readNamespacedDeployment(name,namespace,null,null,null);
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        GsonBuilder builder = new GsonBuilder();
-        builder.setPrettyPrinting();
-        Gson gson = builder.create();
-        ResponseK8 replyJson = gson.fromJson(reply, ResponseK8.class);
-        Integer number_Img =
-                Integer.valueOf(gson.toJson(replyJson.spec.template.spec.containers.size()));
+        List<V1Container> list = Deployment.getSpec().getTemplate().getSpec().getContainers();
         ArrayList<String> images = new ArrayList<String >();
-        for (Integer i = 0;i < number_Img;i++) {
-            String imageName = gson.toJson(replyJson.spec.template.spec.containers.get(i).image);
-            imageName = imageName.replace("\"", "");
-            images.add(i,imageName);
+
+
+        for (V1Container item : list){
+            images.add(item.getImage());
         }
+
+        Integer number_Img = list.size();
         logger.info(String.valueOf(images));
         response.getOutputProperties().setInteger("imageNum",number_Img);
         response.getOutputProperties().setStringArray("listImages",images);

@@ -1,5 +1,5 @@
 ---
   name: "vrcs.kubernetes:KubernetesMaster"
   properties:
-    url:
+    kubeconfig:
       type: "String"

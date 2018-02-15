@@ -13,16 +13,25 @@
  */
 package com.vmware.fms.tile.kubernetes;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.vmware.fms.tile.common.TileExecutable;
 import com.vmware.fms.tile.common.TileExecutableRequest;
 import com.vmware.fms.tile.common.TileExecutableResponse;
 import com.vmware.fms.tile.common.TileProperties;
+import io.kubernetes.client.ApiClient;
+import io.kubernetes.client.Configuration;
+import io.kubernetes.client.apis.CoreV1Api;
+import io.kubernetes.client.apis.ExtensionsV1beta1Api;
+import io.kubernetes.client.models.*;
+import io.kubernetes.client.util.Config;
+import io.kubernetes.client.util.KubeConfig;
 import service.ConvertToJson;
-import service.HttpResponse;
 import service.IsJson;
 import service.KubernetesMasterConfig;
 
-import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -33,270 +42,306 @@ public class Start implements TileExecutable {
     public void handleExecute(TileExecutableRequest request, TileExecutableResponse response){
         TileProperties inputProps = request.getInputProperties().getAsProperties("kubernetesMaster");
         KubernetesMasterConfig config = new KubernetesMasterConfig(inputProps);
-        String hostUrl = config.getMaster();
-        String user_name = config.getUser_name();
-        String password = config.getPassword();
+        String kubeconf = config.getKubeconfig();
+        Reader targetKubernetes  = new StringReader(kubeconf);
+        KubeConfig kubeconfig = KubeConfig.loadKubeConfig(targetKubernetes);
+        ApiClient client = Config.fromConfig(kubeconfig);
+        Configuration.setDefaultApiClient(client);
+
+        Gson gson = new GsonBuilder().setPrettyPrinting().setLenient().create();
+
         String jobType = request.getInputProperties().getAsString("jobName");
         String jobUrl ;
         String reply = new String();
+
         if(jobType.equals("createPod")){
-            jobUrl = "pods";
             String nameSpace = request.getInputProperties().getAsString("nameSpaceOpt");
-            String createUrl = "api/v1/namespaces/"+nameSpace+"/";
-            String url = hostUrl + createUrl+jobUrl;
             String contents = request.getInputProperties().getAsString("definitionContent");
             if(!(IsJson.isJSONValid(contents))){
                 contents = ConvertToJson.convertToJson(contents);
             }
             logger.info(contents);
-            
-            HttpResponse client = new HttpResponse(user_name,password);
+            CoreV1Api api = new CoreV1Api();
+
+            V1Pod body = gson.fromJson(contents,V1Pod.class);
             try {
-                reply = client.post(url, contents, "application/json");
-            } catch (IOException e) {
+                V1Pod value = (api.createNamespacedPod(nameSpace,body,null));
+                reply = String.valueOf(value.getStatus());
+            } catch (Exception e) {
                 e.printStackTrace();
             }
+
         }
         else if(jobType.equals("createPv")){
-            jobUrl = "persistentvolumes";
-            String createUrl = "api/v1/";
-            String url = hostUrl + createUrl+jobUrl;
+
             String contents = request.getInputProperties().getAsString("definitionContent");
             if(!(IsJson.isJSONValid(contents))){
                 contents = ConvertToJson.convertToJson(contents);
             }
             logger.info(contents);
-            HttpResponse client = new HttpResponse(user_name,password);
+            CoreV1Api api = new CoreV1Api();
+            V1PersistentVolume body = gson.fromJson(contents,V1PersistentVolume.class);
+
             try {
-                reply = client.post(url, contents, "application/json");
-            } catch (IOException e) {
+                reply = String.valueOf(api.createPersistentVolume(body,null));
+            } catch (Exception e) {
                 e.printStackTrace();
             }
+
         }else if(jobType.equals("createPvc")){
-            jobUrl = "persistentvolumeclaims";
             String nameSpace = request.getInputProperties().getAsString("nameSpaceOpt");
-            String createUrl = "api/v1/namespaces/"+nameSpace+"/";
-            String url = hostUrl + createUrl+jobUrl;
             String contents = request.getInputProperties().getAsString("definitionContent");
             if(!(IsJson.isJSONValid(contents))) {
                 contents = ConvertToJson.convertToJson(contents);
             }
             logger.info(contents);
-            HttpResponse client = new HttpResponse(user_name,password);
+            CoreV1Api api = new CoreV1Api();
+            V1PersistentVolumeClaim body = gson.fromJson(contents,V1PersistentVolumeClaim.class);
+
             try {
-                reply = client.post(url, contents, "application/json");
-            } catch (IOException e) {
+                reply = String.valueOf(api.createNamespacedPersistentVolumeClaim(nameSpace,body,null));
+            } catch (Exception e) {
                 e.printStackTrace();
             }
+
         }
         else if(jobType.equals("createDp")){
-            jobUrl = "deployments";
+
             String nameSpace = request.getInputProperties().getAsString("nameSpaceOpt");
-            String createUrl = "apis/extensions/v1beta1/namespaces/"+nameSpace+"/";
-            String url = hostUrl + createUrl+jobUrl;
+
+
             String contents = request.getInputProperties().getAsString("definitionContent");
             if(!(IsJson.isJSONValid(contents))){
                 contents = ConvertToJson.convertToJson(contents);
             }
             logger.info(contents);
-            HttpResponse client = new HttpResponse(user_name,password);
+            ExtensionsV1beta1Api api = new ExtensionsV1beta1Api();
+            ExtensionsV1beta1Deployment body = gson.fromJson(contents,ExtensionsV1beta1Deployment.class);
             try {
-                reply = client.post(url, contents, "application/json");
-            } catch (IOException e) {
+                reply  = String.valueOf(api.createNamespacedDeployment(nameSpace,body,null));
+            } catch (Exception e) {
                 e.printStackTrace();
             }
+
         }
         else if (jobType.equals("createRc")) {
-            jobUrl = "replicationcontrollers";
             String nameSpace = request.getInputProperties().getAsString("nameSpaceOpt");
-            String createUrl = "api/v1/namespaces/"+nameSpace+"/";
-            String url = hostUrl + createUrl + jobUrl;
             String contents = request.getInputProperties().getAsString("definitionContent");
             if(!(IsJson.isJSONValid(contents))){
                 contents = ConvertToJson.convertToJson(contents);
             }
-            logger.info(contents);
-            HttpResponse client = new HttpResponse(user_name,password);
+            CoreV1Api api = new CoreV1Api();
+            V1ReplicationController body = gson.fromJson(contents,V1ReplicationController.class);
+
             try {
-                reply = client.post(url, contents, "application/json");
-            } catch (IOException e) {
+                reply = String.valueOf(api.createNamespacedReplicationController(nameSpace,body,null));
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
         else if (jobType.equals("createSecrets")) {
-            jobUrl = "secrets";
             String nameSpace = request.getInputProperties().getAsString("nameSpaceOpt");
-            String createUrl = "api/v1/namespaces/"+nameSpace+"/";
-            String url = hostUrl + createUrl + jobUrl;
             String contents = request.getInputProperties().getAsString("definitionContent");
             if(!(IsJson.isJSONValid(contents))){
                 contents = ConvertToJson.convertToJson(contents);
             }
             logger.info(contents);
-            HttpResponse client = new HttpResponse(user_name,password);
+            CoreV1Api api = new CoreV1Api();
+            V1Secret body = gson.fromJson(contents,V1Secret.class);
             try {
-                reply = client.post(url, contents, "application/json");
-            } catch (IOException e) {
+                reply = String.valueOf(api.createNamespacedSecret(nameSpace,body,null));
+            } catch (Exception e) {
                 e.printStackTrace();
             }
+
         }
         else if (jobType.equals("createRs")) {
-            jobUrl = "replicationcontrollers";
+
             String nameSpace = request.getInputProperties().getAsString("nameSpaceOpt");
-            String createUrl = "apis/extensions/v1beta1/namespaces/"+nameSpace+"/";
-            String url = hostUrl + createUrl + jobUrl;
+
+
             String contents = request.getInputProperties().getAsString("definitionContent");
             if(!(IsJson.isJSONValid(contents))){
                 contents = ConvertToJson.convertToJson(contents);
             }
             logger.info(contents);
-            HttpResponse client = new HttpResponse(user_name,password);
+            ExtensionsV1beta1Api api = new ExtensionsV1beta1Api();
+            V1beta1ReplicaSet body = gson.fromJson(contents,V1beta1ReplicaSet.class);
+
+
             try {
-                reply = client.post(url, contents, "application/json");
-            } catch (IOException e) {
+                reply = String.valueOf(api.createNamespacedReplicaSet(nameSpace,body,null));
+            } catch (Exception e) {
                 e.printStackTrace();
             }
+
+
         }
         else if (jobType.equals("createNs")){
-            jobUrl = "namespaces";
-            String createUrl = "api/v1/";
-            String url = hostUrl + createUrl + jobUrl;
-            HttpResponse client = new HttpResponse(user_name,password);
             String name  = request.getInputProperties().getAsString("nameSpaceVal");
             String contents = "{\"kind\":\"Namespace\",\"apiVersion\":\"v1\",\"metadata\":{\"name\":\""+name+"\",\"creationTimestamp\":null},\"spec\":{},\"status\":{}}\n";
+            CoreV1Api api = new CoreV1Api();
+            V1Namespace body  = gson.fromJson(contents,V1Namespace.class);
             try {
-                reply = client.post(url, contents, "application/json");
-            } catch (IOException e) {
+                reply = String.valueOf(api.createNamespace(body,null));
+            } catch (Exception e) {
                 e.printStackTrace();
             }
+
         }else if(jobType.equals("createSvc")){
-            jobUrl = "services";
+
             String nameSpace = request.getInputProperties().getAsString("nameSpaceOpt");
-            String createUrl = "api/v1/namespaces/"+nameSpace+"/";
-            String url = hostUrl + createUrl + jobUrl;
             String contents = request.getInputProperties().getAsString("definitionContent");
             if(!(IsJson.isJSONValid(contents))){
                 contents = ConvertToJson.convertToJson(contents);
             }
             logger.info(contents);
-            HttpResponse client = new HttpResponse(user_name,password);
+            CoreV1Api api = new CoreV1Api();
+            V1Service body = gson.fromJson(contents,V1Service.class);
             try {
-                reply = client.post(url, contents, "application/json");
-            } catch (IOException e) {
+                reply = String.valueOf(api.createNamespacedService(nameSpace,body,null));
+            } catch (Exception e) {
                 e.printStackTrace();
             }
+
         }
         else if(jobType.equals("deletePod")){
-            jobUrl = "pods/";
+
             String nameSpace = request.getInputProperties().getAsString("nameSpaceOpt");
-            String createUrl = "api/v1/namespaces/"+nameSpace+"/";
             String podName = request.getInputProperties().getAsString("deleteParam");
-            String url = hostUrl + createUrl+jobUrl+podName;
-            HttpResponse client = new HttpResponse(user_name,password);
+            CoreV1Api api = new CoreV1Api();
+            V1DeleteOptions options = new V1DeleteOptions();
+            options.setApiVersion("v1");
+            options.setKind("DeleteOptions");
             try {
-                reply = client.delete(url);
-            } catch (IOException e) {
-                e.printStackTrace();
+                api.deleteNamespacedPod(podName,nameSpace,options,null,5,null,null);
+            } catch (Exception e) {
+                reply  = "{\n" +
+                        "  \"Response\" : \"No Response code for deletion\"\n" +
+                        "}";
             }
+
         }
         else if(jobType.equals("deleteDp")){
-            jobUrl = "deployments/";
             String nameSpace = request.getInputProperties().getAsString("nameSpaceOpt");
-            String createUrl = "apis/extensions/v1beta1/namespaces/"+nameSpace+"/";
-            String podName = request.getInputProperties().getAsString("deleteParam");
-            String url = hostUrl + createUrl+jobUrl+podName;
-            HttpResponse client = new HttpResponse(user_name,password);
+            String depName = request.getInputProperties().getAsString("deleteParam");
+            ExtensionsV1beta1Api api = new ExtensionsV1beta1Api();
+            V1DeleteOptions options = new V1DeleteOptions();
+            options.setApiVersion("extensions/v1beta1");
+            options.setKind("DeleteOptions");
             try {
-                reply = client.delete(url);
-            } catch (IOException e) {
-                e.printStackTrace();
+                api.deleteNamespacedDeployment(depName,nameSpace,options,null,05,null,null);
+            } catch (Exception e) {
+                reply = "{\n" +
+                        "  \"Response\" : \"No Response code for deletion\"\n" +
+                        "}";
             }
+
         }
         else if(jobType.equals("deleteRc")){
-            jobUrl = "replicationcontrollers/";
             String nameSpace = request.getInputProperties().getAsString("nameSpaceOpt");
-            String createUrl = "api/v1/namespaces/"+nameSpace+"/";
-            String podName = request.getInputProperties().getAsString("deleteParam");
-            String url = hostUrl + createUrl+jobUrl+podName;
-            HttpResponse client = new HttpResponse(user_name,password);
+            String rcName = request.getInputProperties().getAsString("deleteParam");
+            CoreV1Api api = new CoreV1Api();
+            V1DeleteOptions options = new V1DeleteOptions();
+            options.setApiVersion("v1");
+            options.setKind("DeleteOptions");
             try {
-                reply = client.delete(url);
-            } catch (IOException e) {
-                e.printStackTrace();
+                api.deleteNamespacedReplicationController(rcName,nameSpace,options,null,5,null,null);
+            } catch (Exception e) {
+                reply  = "{\n" +
+                        "  \"Response\" : \"No Response code for deletion\"\n" +
+                        "}";
             }
+
         }
         else if(jobType.equals("deleteSecrets")){
-            jobUrl = "secrets/";
+
             String nameSpace = request.getInputProperties().getAsString("nameSpaceOpt");
-            String createUrl = "api/v1/namespaces/"+nameSpace+"/";
             String secretName = request.getInputProperties().getAsString("deleteParam");
-            String url = hostUrl + createUrl+jobUrl+secretName;
-            HttpResponse client = new HttpResponse(user_name,password);
+            CoreV1Api api = new CoreV1Api();
+            V1DeleteOptions options = new V1DeleteOptions();
+            options.setApiVersion("v1");
+            options.setKind("DeleteOptions");
             try {
-                reply = client.delete(url);
-            } catch (IOException e) {
-                e.printStackTrace();
+                api.deleteNamespacedSecret(secretName,nameSpace,options,null,5,null,null);
+            } catch (Exception e) {
+                reply  = "{\n" +
+                        "  \"Response\" : \"No Response code for deletion\"\n" +
+                        "}";
             }
         }
         else if(jobType.equals("deleteRs")){
-            jobUrl = "replicasets/";
             String nameSpace = request.getInputProperties().getAsString("nameSpaceOpt");
-            String createUrl = "apis/extensions/v1beta1/namespaces/"+nameSpace+"/";
-            String podName = request.getInputProperties().getAsString("deleteParam");
-            String url = hostUrl + createUrl+jobUrl+podName;
-            HttpResponse client = new HttpResponse(user_name,password);
+            String rsName = request.getInputProperties().getAsString("deleteParam");
+            ExtensionsV1beta1Api api = new ExtensionsV1beta1Api();
+            V1DeleteOptions options = new V1DeleteOptions();
+            options.setApiVersion("extensions/v1beta1");
+            options.setKind("DeleteOptions");
             try {
-                reply = client.delete(url);
-            } catch (IOException e) {
-                e.printStackTrace();
+                api.deleteNamespacedReplicaSet(rsName,nameSpace,options,null,05,null,null);
+            } catch (Exception e) {
+                reply = "{\n" +
+                        "  \"Response\" : \"No Response code for deletion\"\n" +
+                        "}";
             }
+
+
         }
         else if(jobType.equals("deleteNs")){
-            String nameSpace = request.getInputProperties().getAsString("nameSpaceOpt");
-            String createUrl = "api/v1/namespaces/";
-            String podName = request.getInputProperties().getAsString("deleteParam");
-            String url = hostUrl + createUrl+podName;
-            HttpResponse client = new HttpResponse(user_name,password);
+            String nsName = request.getInputProperties().getAsString("deleteParam");
+            CoreV1Api api = new CoreV1Api();
+            V1DeleteOptions options = new V1DeleteOptions();
+            options.setApiVersion("v1");
+            options.setKind("DeleteOptions");
             try {
-                reply = client.delete(url);
-            } catch (IOException e) {
-                e.printStackTrace();
+                api.deleteNamespace(nsName,options,null,5,null,null);
+            } catch (Exception e) {
+                reply  = "{\n" +
+                        "  \"Response\" : \"No Response code for deletion\"\n" +
+                        "}";
             }
+
         }else if(jobType.equals("deleteSvc")){
-            jobUrl = "services/";
             String nameSpace = request.getInputProperties().getAsString("nameSpaceOpt");
-            String createUrl = "api/v1/namespaces/"+nameSpace+"/";
-            String podName = request.getInputProperties().getAsString("deleteParam");
-            String url = hostUrl + createUrl+jobUrl+podName;
-            HttpResponse client = new HttpResponse(user_name,password);
+            String svcName = request.getInputProperties().getAsString("deleteParam");
+            CoreV1Api api = new CoreV1Api();
             try {
-                reply = client.delete(url);
-            } catch (IOException e) {
-                e.printStackTrace();
+                api.deleteNamespacedService(svcName,nameSpace,null);
+            } catch (Exception e) {
+                reply  = "{\n" +
+                        "  \"Response\" : \"No Response code for deletion\"\n" +
+                        "}";
             }
+
         }else if(jobType.equals("deletePvc")){
-            jobUrl = "persistentvolumeclaims/";
             String nameSpace = request.getInputProperties().getAsString("nameSpaceOpt");
-            String createUrl = "api/v1/namespaces/"+nameSpace+"/";
-            String podName = request.getInputProperties().getAsString("deleteParam");
-            String url = hostUrl + createUrl+jobUrl+podName;
-            HttpResponse client = new HttpResponse(user_name,password);
+            String pvcName = request.getInputProperties().getAsString("deleteParam");
+            CoreV1Api api = new CoreV1Api();
+            V1DeleteOptions options = new V1DeleteOptions();
+            options.setApiVersion("v1");
+            options.setKind("DeleteOptions");
             try {
-                reply = client.delete(url);
-            } catch (IOException e) {
-                e.printStackTrace();
+                api.deleteNamespacedPersistentVolumeClaim(pvcName,nameSpace,options,null,5,null,null);
+            } catch (Exception e) {
+                reply  = "{\n" +
+                        "  \"Response\" : \"No Response code for deletion\"\n" +
+                        "}";
             }
+
         }else if(jobType.equals("deletePv")){
-            jobUrl = "persistentvolumes/";
-            String createUrl = "api/v1/";
             String podName = request.getInputProperties().getAsString("deleteParam");
-            String url = hostUrl + createUrl+jobUrl+podName;
-            HttpResponse client = new HttpResponse(user_name,password);
+            CoreV1Api api = new CoreV1Api();
+            V1DeleteOptions options = new V1DeleteOptions();
+            options.setApiVersion("v1");
+            options.setKind("DeleteOptions");
             try {
-                reply = client.delete(url);
-            } catch (IOException e) {
-                e.printStackTrace();
+                api.deletePersistentVolume(podName,options,null,5,null,null);
+            } catch (Exception e) {
+                reply  = "{\n" +
+                        "  \"Response\" : \"No Response code for deletion\"\n" +
+                        "}";
             }
+
         }else if(jobType.equals("updateImg")) {
             String depName = request.getInputProperties().getAsString("depName");
             String nameSpace = request.getInputProperties().getAsString("nameSpaceOpt");
@@ -319,8 +364,7 @@ public class Start implements TileExecutable {
             Scale scaling = new Scale(config,url,replicaCount);
         }*/
         logger.info(reply);
-        response.getOutputProperties().setJson("response",reply);
+        response.getOutputProperties().setString("response",reply);
         response.setCompleted(true);
-
     }
 }

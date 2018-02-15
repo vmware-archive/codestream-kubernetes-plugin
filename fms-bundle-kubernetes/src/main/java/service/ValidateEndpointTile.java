@@ -18,12 +18,17 @@ import com.vmware.fms.tile.common.TileExecutable;
 import com.vmware.fms.tile.common.TileExecutableRequest;
 import com.vmware.fms.tile.common.TileExecutableResponse;
 import com.vmware.fms.tile.common.TileProperties;
+import io.kubernetes.client.ApiClient;
+import io.kubernetes.client.Configuration;
+import io.kubernetes.client.apis.CoreV1Api;
+import io.kubernetes.client.util.Config;
+import io.kubernetes.client.util.KubeConfig;
 import org.apache.commons.lang.StringUtils;
 
+import java.io.Reader;
+import java.io.StringReader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class ValidateEndpointTile implements TileExecutable {
 
@@ -37,30 +42,26 @@ public class ValidateEndpointTile implements TileExecutable {
             {
                 response.setFailed("Invalid input property. 'Kubernetes' input parameter not found.");
             }
-            String masterUrl = inputProps.getAsString("url");
-
-            //To check if the url is empty
-            if (StringUtils.isBlank(masterUrl)) {
-                logger.log(Level.SEVERE, "Invalid input property. 'url' is not found for given Kubernetes master");
-                response.setFailed("Invalid input property. 'url' is not found for given Kubernetes master");
-            }
             KubernetesMasterConfig config = new KubernetesMasterConfig(inputProps);
-            //To format the serverUrl
-            masterUrl = KubernetesTileUtils.prepUrl(config.getMaster());
-            // Checking url against the pattern checking its correctness
-            String pattern = "\\Ahttp[s]?://.+[:\\d{1,5}]/\\z";
-            Pattern urlPattern = Pattern.compile(pattern);
-            Matcher matcher = urlPattern.matcher(config.getMaster());
-            if (!matcher.find()) {
-                logger.log(Level.SEVERE, "Invalid server url");
-                response.setFailed("Invalid server url");
+            String kubeconf = config.getKubeconfig();
+
+            //To check if the kubeconfig is empty
+            if (StringUtils.isBlank(kubeconf)) {
+                logger.log(Level.SEVERE, "Invalid input property. 'kubeconfig' is not found for given Kubernetes master");
+                response.setFailed("Invalid input property. 'kubeconfig' is not found for given Kubernetes endpoint");
             }
-        } catch (IllegalArgumentException ie) {
-            logger.log(Level.SEVERE, "Failed to parse kubernetes master endpoint");
-            response.setFailed("Invalid kubernetes master specification");
+
+            Reader targetKubernetes  = new StringReader(kubeconf);
+            KubeConfig kubeconfig = KubeConfig.loadKubeConfig(targetKubernetes);
+            ApiClient client = Config.fromConfig(kubeconfig);
+            Configuration.setDefaultApiClient(client);
+
+            CoreV1Api api = new CoreV1Api();
+            logger.log(Level.INFO, String.valueOf(api.listNode(null,null,null,null,20,null)));
+
         } catch (Exception ex) {
-            logger.log(Level.SEVERE, "Failed to connect to kubernetes master endpoint ",ex);
-            response.setFailed("Unable to connect to kubernetes master ");
+            logger.log(Level.SEVERE, "Failed to get the list of Nodes  ",ex);
+            response.setFailed("Unable to fetch the List of Nodes from the given kubeconfig");
         }
     }
 }

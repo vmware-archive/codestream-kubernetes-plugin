@@ -12,19 +12,27 @@
  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 package com.vmware.fms.tile.kubernetes;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.vmware.fms.tile.common.TileExecutable;
 import com.vmware.fms.tile.common.TileExecutableRequest;
 import com.vmware.fms.tile.common.TileExecutableResponse;
 import com.vmware.fms.tile.common.TileProperties;
-import com.vmware.fms.tile.kubernetes.util.ResponseK8;
-import service.HttpResponse;
 import service.KubernetesMasterConfig;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.logging.Logger;
+
+import io.kubernetes.client.ApiClient;
+import io.kubernetes.client.ApiException;
+import io.kubernetes.client.Configuration;
+import io.kubernetes.client.apis.CoreV1Api;
+import io.kubernetes.client.models.V1Namespace;
+import io.kubernetes.client.models.V1NamespaceList;
+import io.kubernetes.client.util.Config;
+import io.kubernetes.client.util.KubeConfig;
+
+import java.io.Reader;
+import java.io.StringReader;
+
 public class ListNs implements TileExecutable {
 
     private static final Logger logger = Logger.getLogger(ListNs.class.getName());
@@ -33,28 +41,23 @@ public class ListNs implements TileExecutable {
         logger.info("\nEntered ListNs\n");
         TileProperties inputProps = request.getInputProperties().getAsProperties("kubernetesMaster");
         KubernetesMasterConfig config = new KubernetesMasterConfig(inputProps);
-        String hostUrl = config.getMaster();
-        String user_name = config.getUser_name();
-        String password = config.getPassword();
-        String createUrl = "api/v1/namespaces";
-        String reply = null;
-        String url = hostUrl + createUrl;
-        HttpResponse client = new HttpResponse(user_name,password);
+
+        String kubeconf = config.getKubeconfig();
+        Reader targetKubernetes  = new StringReader(kubeconf);
+        KubeConfig kubeconfig = KubeConfig.loadKubeConfig(targetKubernetes);
+        ApiClient client = Config.fromConfig(kubeconfig);
+        Configuration.setDefaultApiClient(client);
+        CoreV1Api api = new CoreV1Api();
+
+        ArrayList<String> namespace = new ArrayList<String >();
+        V1NamespaceList list = null;
         try {
-            reply = client.get(url);
-        } catch (IOException e) {
+            list = api.listNamespace(null, null, null, null, null, null);
+        } catch (ApiException e) {
             e.printStackTrace();
         }
-        GsonBuilder builder = new GsonBuilder();
-        builder.setPrettyPrinting();
-        Gson gson = builder.create();
-        ResponseK8 replyJson = gson.fromJson(reply, ResponseK8.class);
-        Integer number_dep =  Integer.valueOf(gson.toJson(replyJson.items.size()));
-        ArrayList<String> namespace = new ArrayList<String >();
-        for (Integer i=0;i < number_dep;i++) {
-            String nsName = gson.toJson(replyJson.items.get(i).metadata.name);
-            nsName = nsName.replace("\"", "");
-            namespace.add(i,nsName);
+        for (V1Namespace item : list.getItems()) {
+            namespace.add(item.getMetadata().getName());
         }
         logger.info(String.valueOf(namespace));
         response.getOutputProperties().setStringArray("listNs",namespace);

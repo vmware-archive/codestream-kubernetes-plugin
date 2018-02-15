@@ -19,32 +19,21 @@ VRCS.view.config(VRCS.view.alpaca.createConfig({
             type: 'object',
             properties: {
                 // inputParameters go here
-                url: {
-                    title: 'Url',
-                    required: true
-                },
-                username: {
-                     title: 'Username'
-                     },
-                password: {
-                     title: 'Password'
-                     }
+                kubeconfig: {
+                    type: 'string',
+                     title: 'Kube Config'
+                }
 
             }
         },
         options: {
             fields: {
-                url: {
-                    type: 'url',
-                    allowIntranet: true,
-                    placeholder: 'eg: protocol://host:port'
-                },
-                username: {
-                    placeholder: 'username'
-                },
-                password: {
-                    type: 'password',
-                    placeholder: 'password'
+                kubeconfig: {
+                    type : "textarea",
+                    name: "your_feedback",
+                    rows: 5,
+                    cols: 40,
+                    placeholder: 'Please enter your cluster Kube config'
                 }
             }
         },

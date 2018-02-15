@@ -13,17 +13,24 @@
  */
 package com.vmware.fms.tile.kubernetes;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.vmware.fms.tile.common.TileExecutable;
 import com.vmware.fms.tile.common.TileExecutableRequest;
 import com.vmware.fms.tile.common.TileExecutableResponse;
 import com.vmware.fms.tile.common.TileProperties;
-import com.vmware.fms.tile.kubernetes.util.ResponseK8;
-import java.io.IOException;
+
+import java.io.Reader;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.logging.Logger;
-import service.HttpResponse;
+
+import io.kubernetes.client.ApiClient;
+import io.kubernetes.client.ApiException;
+import io.kubernetes.client.Configuration;
+import io.kubernetes.client.apis.CoreV1Api;
+import io.kubernetes.client.models.V1PersistentVolumeClaim;
+import io.kubernetes.client.models.V1PersistentVolumeClaimList;
+import io.kubernetes.client.util.Config;
+import io.kubernetes.client.util.KubeConfig;
 import service.KubernetesMasterConfig;
 
 
@@ -33,31 +40,24 @@ public class ListPvc implements TileExecutable {
         logger.info("\nEntered ListPvc\n");
         TileProperties inputProps = request.getInputProperties().getAsProperties("kubernetesMaster");
         KubernetesMasterConfig config = new KubernetesMasterConfig(inputProps);
-        String hostUrl = config.getMaster();
-        String user_name = config.getUser_name();
-        String password = config.getPassword();
         String namespace = request.getInputProperties().getAsString("nameSpaceVal");
-        String createUrl = "api/v1/namespaces/" + namespace + "/persistentvolumeclaims";
-        String reply = null;
-        String url = hostUrl + createUrl;
-
-        HttpResponse client = new HttpResponse(user_name,password);
+        String kubeconf = config.getKubeconfig();
+        Reader targetKubernetes  = new StringReader(kubeconf);
+        KubeConfig kubeconfig = KubeConfig.loadKubeConfig(targetKubernetes);
+        ApiClient client = Config.fromConfig(kubeconfig);
+        Configuration.setDefaultApiClient(client);
+        CoreV1Api api = new CoreV1Api();
+        V1PersistentVolumeClaimList list =null;
         try {
-            reply = client.get(url);
-        } catch (IOException e) {
+            list = api.listNamespacedPersistentVolumeClaim(namespace,null,null,null,null,20,null);
+        } catch (ApiException e) {
             e.printStackTrace();
         }
-        GsonBuilder builder = new GsonBuilder();
-        builder.setPrettyPrinting();
-        Gson gson = builder.create();
-        ResponseK8 replyJson = gson.fromJson(reply, ResponseK8.class);
-        Integer number_dep =  Integer.valueOf(gson.toJson(replyJson.items.size()));
         ArrayList<String> pvcList = new ArrayList<String >();
-        for (Integer i = 0;i <  number_dep;i++) {
-            String nsName = gson.toJson(replyJson.items.get(i).metadata.name);
-            nsName = nsName.replace("\"", "");
-            pvcList.add(i,nsName);
+        for(V1PersistentVolumeClaim item : list.getItems()){
+            pvcList.add(item.getMetadata().getName());
         }
+
         logger.info(String.valueOf(pvcList));
         response.getOutputProperties().setStringArray("listPvc",pvcList);
     }
