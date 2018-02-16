@@ -9,12 +9,11 @@ This vRealize Code Stream plugin automates CI/CD operations with Kubernetes. Thi
 vRealize Code Stream 2.2, vRealize Code Stream 2.3, vRealize Code Stream 2.4
 
 ## Compatibility with Kubernetes Versions
-Authentication is based on kubeconfig
-Kubernetes 1.5.2, 1.6
+Kubernetes 1.5, 1.6, 1.7, 1.9 
 
 ### Prerequisites
 1. A Kubernetes Cluster is already deployed.
-2. Kubernetes cluster's master IP address or DNS name with API auth.
+2. Kubernetes cluster's kubeconfig file.
 3. A development machine running on Microsoft Windows, Apple Mac OS X or Linux.
 4. A development appliance of vRealize Code Stream installed in your environment (Recommended).
 5. JDK 8
