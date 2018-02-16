@@ -31,6 +31,18 @@ Building the plugin
 3. Go to the target/ directory under root and copy the fms-bundle-kubernetes-2.0.2.zip to       VRCS_APPLIANCE_HOST:/var/lib/codestrem/plugins/
 4. Unzip the zip file and restart the vcac-server service. (It will take 10-15 minutes for all the service to start. You can check VRBC_INSTANCE_URL:5480).
 
+## Current Features
+1. Create/Delete Deployment
+2. Create/Delete ReplicaSet
+3. Create/Delete Replication Controller
+4. Create/Delete Pod
+5. Create/Delete Namespace
+6. Create/Delete Service
+7. Create/Delete Persistent Volume
+8. Create/Delete Persistent Volume Claim
+9. Create/Delete Secrets
+10. Update of image versions in a deployment
+
 ## Contributing
 
 The codestream-kubernetes-plugin project team welcomes contributions from the community. Before you start working with codestream-kubernetes-plugin, please read our [Developer Certificate of Origin](https://cla.vmware.com/dco). All contributions to this repository must be signed as described on that page. Your signature certifies that you wrote the patch or have the right to pass it on as an open-source patch. For more detailed information, refer to [CONTRIBUTING.md](CONTRIBUTING.md).
