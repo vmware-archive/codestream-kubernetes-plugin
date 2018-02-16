@@ -6,8 +6,8 @@ The codestream-kubernetes-plugin project team welcomes contributions from the co
 
 ## Getting Started
 ### Prerequisites
-1. A Kubernetes 1.5.2 Cluster is already deployed
-2. Kubernetes cluster's master IP address or DNS name with API auth
+1. A Kubernetes Cluster is already deployed.
+2. Kubernetes cluster's KUBECONF file is required.
 3. A development machine running on Microsoft Windows, Apple Mac OS X or Linux.
 4. A development appliance of VMware vRealize Code Stream installed in your environment (Recommended).
 5. JDK 8
@@ -26,6 +26,28 @@ Building the plugin
 4. Unzip the zip file and restart the vcac-server service. (Itwill take 10-15 minutes for all the service to start. You can check VRBC_INSTANCE_URL:5480).
 
 ## Contribution Flow
+
+NOTE: This plugin uses backward compatibilty of deployment and replicaset. Please give API version for deployment and replicaset as 'extention/v1beta1'. 
+
+Example yaml file:
+
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+spec:
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.7.9
+        ports:
+        - containerPort: 80
+
 
 This is a rough outline of what a contributor's workflow looks like:
 
