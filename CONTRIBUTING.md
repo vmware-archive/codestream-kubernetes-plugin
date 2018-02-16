@@ -31,7 +31,7 @@ NOTE: This plugin uses backward compatibilty of deployment and replicaset. Pleas
 
 Example yaml file:
 
-apiVersion: extensions/v1beta1
+```apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   name: nginx-deployment
@@ -47,7 +47,7 @@ spec:
         image: nginx:1.7.9
         ports:
         - containerPort: 80
-
+```
 
 This is a rough outline of what a contributor's workflow looks like:
 
