@@ -9,7 +9,7 @@ This vRealize Code Stream plugin automates CI/CD operations with Kubernetes. Thi
 vRealize Code Stream 2.2, vRealize Code Stream 2.3, vRealize Code Stream 2.4
 
 ## Compatibility with Kubernetes Versions
-Kubernetes 1.5, 1.6, 1.7, 1.9 
+Kubernetes 1.5, 1.6, 1.7, 1.8, 1.9 
 
 ### Prerequisites
 1. A Kubernetes Cluster is already deployed.
@@ -51,7 +51,8 @@ NOTE: This plugin uses backward compatibilty of deployment and replicaset. Pleas
 
 Example yaml file:
 
-```apiVersion: extensions/v1beta1
+```
+apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   name: nginx-deployment

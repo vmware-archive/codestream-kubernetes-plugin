@@ -31,7 +31,8 @@ NOTE: This plugin uses backward compatibilty of deployment and replicaset. Pleas
 
 Example yaml file:
 
-```apiVersion: extensions/v1beta1
+```
+apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   name: nginx-deployment
